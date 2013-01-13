@@ -25,9 +25,3 @@ def dict_diff(d1, d2):
     else:
         return colorama.Fore.YELLOW + str(d2) + colorama.Fore.RESET
 
-print dict_diff(4, 3)
-print dict_diff(4, {'a': 3})
-print dict_diff({'a': 4}, {'a': 3})
-print dict_diff({'a': {'b': {'c': 3}}}, {'a': {'b': {'c': 6}}})
-print dict_diff({'a': {'b': {'c': 3}}}, {'a': {'b': {'d': 3}}})
-print dict_diff({'a': {'b': {'c': 3}}}, {'a': {'c': {'b': 3}}})

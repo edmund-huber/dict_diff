@@ -4,10 +4,19 @@ import dict_diff
 
 
 class TestCase(unittest.TestCase):
+
+    no_diff = False
+
     def test_correct(self):
-        diff, printed = dict_diff.dict_diff(self.a, self.b)
-        self.assertEqual(self.diff, diff)
-        self.assertEqual(self.printed, printed)
+        diff, printed, b = dict_diff.dict_diff(self.a, self.b)
+        if self.no_diff:
+            self.assertEqual(self.a, self.b)
+            self.assertEqual(diff, self.a)
+            self.assertFalse(b)
+        else:
+            self.assertEqual(self.diff, diff)
+            self.assertEqual(self.printed, printed)
+            self.assertTrue(b)
         print printed
 
 
@@ -51,6 +60,12 @@ class Test6(TestCase):
     b = {'a': {'c': {'b': 3}}}
     diff = {'a': {(None, 'c'): {'b': 3}, ('b', None): {'c': 3}}}
     printed = '{a: {\x1b[31mb: {c: 3}\x1b[39m, \x1b[32mc: {b: 3}\x1b[39m}}'
+
+
+class Test7(TestCase):
+    a = {'a': 6, 'b': 'aaaa'}
+    b = {'a': 6, 'b': 'aaaa'}
+    no_diff = True
 
 
 if __name__ == '__main__':

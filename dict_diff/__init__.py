@@ -7,21 +7,35 @@ def dict_diff(d1, d2):
         # values match, it may be more reasonable to describe the diff
         # as a change in the key.
         if len(d1) == 1 and len(d2) == 1 and d1.keys() != d2.keys() and d1.values() == d2.values():
-            return colorama.Fore.YELLOW + d2.keys()[0] + colorama.Fore.RESET + ': ' + dict_diff(d1.values()[0], d1.values()[0])
+            diff, printed = dict_diff(d1.values()[0], d1.values()[0])
+            return (
+                {(d1.keys()[0], d2.keys()[0]): diff},
+                colorama.Fore.YELLOW + str(d2.keys()[0]) + colorama.Fore.RESET + ': ' + printed)
         else:
-            items = []
+            diff_items = []
+            printed_items = []
             # Keys unique to d1 are deletions.
             for k1 in set(d1) - set(d2):
-                items.append(colorama.Fore.RED + str(k1) + ': ' + dict_diff(d1[k1], d1[k1]) + colorama.Fore.RESET)
+                diff, printed = dict_diff(d1[k1], d1[k1])
+                diff_items.append(((k1, None), diff))
+                printed_items.append(colorama.Fore.RED + str(k1) + ': ' + printed + colorama.Fore.RESET)
             # Keys unique to d2 are additions.
             for k2 in set(d2) - set(d1):
-                items.append(colorama.Fore.GREEN + str(k2) + ': ' + dict_diff(d2[k2], d2[k2]) + colorama.Fore.RESET)
+                diff, printed = dict_diff(d2[k2], d2[k2])
+                diff_items.append(((None, k2), diff))
+                printed_items.append(colorama.Fore.GREEN + str(k2) + ': ' + printed + colorama.Fore.RESET)
             # Keys present in both may have different values.
             for k in set(d1) & set(d2):
-                items.append(str(k) + ': ' + dict_diff(d1[k], d2[k]))
-            return '{' + ', '.join(items) + '}'
+                diff, printed = dict_diff(d1[k], d2[k])
+                diff_items.append((k, diff))
+                printed_items.append(str(k) + ': ' + printed)
+            return (
+                dict(diff_items),
+                '{' + ', '.join(printed_items) + '}')
     elif d1 == d2:
-        return str(d1)
+        return d1, str(d1)
     else:
-        return colorama.Fore.YELLOW + str(d2) + colorama.Fore.RESET
+        return (
+            (d1, d2),
+            colorama.Fore.YELLOW + str(d2) + colorama.Fore.RESET)
 
